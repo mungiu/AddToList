@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace AddToList
 {
@@ -41,10 +42,26 @@ namespace AddToList
             //there might be a small performance hit when copying very big arrays
             Console.WriteLine("Capacity = " + presidents.Capacity + "\r\n");
 
-            //will generate error as no elements yet exists at this index
-            string who = presidents[10];
+            ////generates error - no elements exists at this index
+            //string who = presidents[10];
+
+            ////only safe against well behaved code
+            ////underlying list can still be modified by:
+            //// using System.Reflection;
+            //var copy = presidents.AsReadOnly();
+            // or:
+            var copy = new ReadOnlyCollection<string>(presidents);
+            BadCode(copy);
+            Console.WriteLine(copy);
+
+            //works on IList<T> because it implements IEnumerable<T>
             foreach (string president in presidents)
                 Console.WriteLine(president);
+        }
+
+        static void BadCode(IList<string> lst)
+        {
+            lst.RemoveAt(2);
         }
     }
 }
